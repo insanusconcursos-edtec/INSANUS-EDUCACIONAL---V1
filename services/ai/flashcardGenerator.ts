@@ -1,3 +1,4 @@
+
 import { GoogleGenAI } from "@google/genai";
 import { Flashcard } from "../metaService";
 
@@ -5,18 +6,8 @@ import { Flashcard } from "../metaService";
 // ÁREA DE DEBUG DE CONEXÃO
 // ==================================================================================
 
-// FIX: Usando process.env.API_KEY conforme diretrizes
-const API_KEY = process.env.API_KEY;
-
-// Log de Diagnóstico (Mascarado para segurança no console)
-const maskedKey = API_KEY 
-  ? `${API_KEY.substring(0, 6)}...${API_KEY.substring(API_KEY.length - 4)}` 
-  : "UNDEFINED/VAZIA";
-
-console.log(`[FlashcardGenerator] INICIANDO SERVIÇO. Status da Key: ${maskedKey}`);
-
-// Inicializa o cliente APENAS se houver key (validação ocorre dentro da função também)
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+// Removido inicialização global para evitar crash se process.env for undefined
+// const ai = new GoogleGenAI({ apiKey: API_KEY }); <-- CAUSADOR DO CRASH
 
 interface AIFlashcardResult {
   question: string;
@@ -61,12 +52,22 @@ async function fileToGenerativePart(file: File): Promise<{ inlineData: { data: s
  * Gera Flashcards a partir de múltiplos arquivos PDF usando Gemini
  */
 export async function generateFlashcardsFromDocuments(files: File[]): Promise<Flashcard[]> {
+  const API_KEY = process.env.API_KEY || '';
+  
+  // Log de Diagnóstico (Mascarado para segurança no console)
+  const maskedKey = API_KEY 
+    ? `${API_KEY.substring(0, 6)}...${API_KEY.substring(API_KEY.length - 4)}` 
+    : "UNDEFINED/VAZIA";
+
   try {
     // 1. Validação Rigorosa da Key
     if (!API_KEY) {
       console.error("[FlashcardGenerator] ERRO FATAL: API Key não encontrada.");
       throw new Error("Erro de Configuração: API Key do Google (process.env.API_KEY) não foi encontrada.");
     }
+
+    // INICIALIZAÇÃO TARDIA (LAZY)
+    const ai = new GoogleGenAI({ apiKey: API_KEY });
 
     if (!files || files.length === 0) {
       throw new Error("Nenhum arquivo fornecido.");

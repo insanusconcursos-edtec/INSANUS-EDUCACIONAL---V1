@@ -1,8 +1,5 @@
-import { GoogleGenAI } from "@google/genai";
 
-// Configuração da API
-// A chave deve estar no arquivo .env como VITE_GEMINI_API_KEY ou configurada no ambiente
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+import { GoogleGenAI } from "@google/genai";
 
 export interface AIMindMapNode {
   id: string;
@@ -39,12 +36,16 @@ export async function fileToGenerativePart(file: File): Promise<{ inlineData: { 
  */
 export async function generateMindMapStructure(pdfFile: File): Promise<AIMindMapNode> {
   try {
-    if (!process.env.API_KEY) {
-        console.warn("API Key não encontrada. Verifique seu arquivo .env");
+    const apiKey = process.env.API_KEY || '';
+    if (!apiKey) {
+        console.warn("API Key não encontrada. Verifique seu arquivo .env ou configurações da Vercel.");
     }
 
     if (!pdfFile) throw new Error("Nenhum arquivo PDF fornecido para a IA.");
     
+    // INICIALIZAÇÃO TARDIA (LAZY) - Previne crash no boot da aplicação
+    const ai = new GoogleGenAI({ apiKey });
+
     console.log("1. Preparando arquivo para envio (Base64)...");
     const pdfPart = await fileToGenerativePart(pdfFile);
 
