@@ -1,0 +1,8 @@
+{
+  "name": "BACKUP 32 - PLANNER INSANUS - V2 (ATUALIZAÇÃO 2)",
+  "description": "Uma plataforma futurista de gestão de estudos para concursos, com foco em gamificação e ciclos de estudo inteligentes.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
