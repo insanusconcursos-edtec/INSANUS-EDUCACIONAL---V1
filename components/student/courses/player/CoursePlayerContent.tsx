@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { CourseLesson, CourseContent } from '../../../../types/course';
 import { courseService } from '../../../../services/courseService';
@@ -78,7 +79,7 @@ export function CoursePlayerContent({ lesson }: CoursePlayerContentProps) {
             if (item.type === 'video') {
                 return (
                     <div key={item.id} className="w-full bg-black border-b border-gray-900 shadow-2xl relative z-10">
-                        <div className="w-full aspect-video mx-auto"> 
+                        <div className="w-full max-w-5xl aspect-video mx-auto"> 
                             {item.videoPlatform === 'youtube' ? (
                                 <iframe 
                                     src={`https://www.youtube.com/embed/${getYouTubeID(item.videoUrl || '')}?modestbranding=1&rel=0&showinfo=0`}
